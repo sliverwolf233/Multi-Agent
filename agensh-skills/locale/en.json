@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Agensh Self-Assign Skills",
+    "description": "Agensh-style self-organization skills for Agent Teams with a dsh-superagent role split: the Lead works as a project manager — interviews the user first, sets Goal and Plan, shapes the board for peer (对等协作) or pipeline (流水线协作) collaboration, and delegates all coding and verification; workers self-claim tasks from the shared board, hand off stage artifacts, verify peers' deliverables with verdict reports, and merge progress."
+  }
+}

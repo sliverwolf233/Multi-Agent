@@ -1,0 +1,12 @@
+{
+  "name": "@local/agensh-preset",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent preset based on the shipped ptc preset with an always-on Agensh project-manager Lead persona: interview first, set Goal and Plan, auto-select peer or pipeline collaboration from the user's intent, delegate all coding and verification.",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

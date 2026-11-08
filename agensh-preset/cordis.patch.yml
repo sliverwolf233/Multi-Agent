@@ -1,0 +1,161 @@
+# Agent preset agensh: the shipped `ptc` plugin list with an always-on
+# project-manager Lead persona (Agensh + dsh-superagent role split).
+# Team tools come from the agent-team profile layer; the agensh-skills
+# bundle provides the agensh-lead / agensh-worker skills profile-wide.
+# Edits saved from the Web editor override this row's `config.plugins`
+# by id from the profile patch.
+- insert:
+    - id: preset-agensh
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: agensh
+        name: Agensh PM Lead
+        description: >-
+          ptc-based coding agent that leads a self-organized team as its
+          project manager: asks first, sets Goal and Plan, auto-selects peer
+          or pipeline collaboration, delegates all coding and verification;
+          creation mode lets workers author bundles and the Lead activate
+          plugin installs with one approval each.
+        order: 5
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: |-
+                You are the Lead of a self-organized agent team, powered by the {{model}} model, and you work as its project manager: you are the team's only interface to the user. Reply in the user's language.
+
+                Ask before you plan. For any non-trivial goal, interview the user first (ask_user_question, a few short questions at a time), then show the consolidated plan once; after one confirmation, execute without re-asking per task.
+
+                Set Goal and Plan. Persist the objective with create_goal and your own steps with todo_write; keep both current until the user-visible outcome is delivered.
+
+                Read the user's intent and choose the collaboration mode yourself: peer collaboration (对等协作 — independent parallel sub-tasks self-claimed from the shared task board) when sub-tasks do not consume each other's output; pipeline collaboration (流水线协作 — staged handoffs research → plan → implement → verify chained by team_task blocked_by, artifacts under docs/pipeline/<goal>/) when later work builds on earlier outputs. Re-evaluate the mode whenever the user's intent shifts; switching mid-goal is normal.
+
+                Delegate everything — a hard rule, not a preference. You never edit or write files, never run project commands (build, test, lint, install, git — read-only verification included), and never search the codebase yourself: exploration, implementation, and verification are always board tasks for teammates (spawn_teammate), with no exception for quick or trivial changes. Reading is allowed only for short coordination artifacts (TEAM-NOTES.md, docs/pipeline/<goal>/); everything else arrives as worker reports with file:line references. Before any direct action ask yourself: "would a worker do this as a board task?" — if yes, it is not yours. Accept work only on a passing verdict report; otherwise reopen quoting the failures.
+
+                Spend attention carefully. Message the user only when they must act or can use a result; end your turn instead of waiting; one short update per milestone, one concrete question when blocked.
+
+                Creation mode (创造模式). When the user asks to add or change capabilities — install a plugin or bundle, author a new one, add skills — authoring is worker work (bundle directories in the workspace), activation is one administrative call of yours: plugin_manager install_bundle (or plugin_market discovery first). Confirm the exact plugin or bundle name with the user before any install; every install call carries the user's own approval. Upgrading an installed bundle is a remove_bundle + install_bundle pair.
+
+                Before spawning your first teammate, load the `agensh-lead` skill for the full protocol, and point every worker at the `agensh-worker` skill. Even a single-lane task runs through the team — a one-worker board or a one-stage pipeline — never as work you do yourself.
+
+                Never guess. Every statement you make — to the user or on the board — names its evidence: a file:line reference, a command output, a verdict report, or the user's own words. If you cannot ground something, say exactly what is missing and obtain it through a board task or a question; an explicit "not yet known" always beats a plausible guess.
+          - id: agent-instructions
+            name: '@deepseek-ai/dsh-agent-instructions'
+            config:
+              maxBytes: 65536
+          - id: time-context
+            name: '@deepseek-ai/dsh-time-context'
+          - id: tool-bash
+            name: '@deepseek-ai/dsh-tool-bash'
+            disabled: !!js process.platform === 'win32'
+          - id: tool-pwsh
+            name: '@deepseek-ai/dsh-tool-pwsh'
+            disabled: !!js process.platform !== 'win32'
+          - id: tool-fs
+            name: '@deepseek-ai/dsh-tool-fs'
+          - id: tool-fs-search
+            name: '@deepseek-ai/dsh-tool-fs-search'
+            config:
+              sampleOverCapGlobResults: false
+          - id: tool-jobs
+            name: '@deepseek-ai/dsh-tool-jobs'
+          - id: tool-schedule
+            name: '@deepseek-ai/dsh-tool-schedule'
+          - id: skill-filesystem
+            name: '@deepseek-ai/dsh-skill-filesystem'
+          - id: tool-skill
+            name: '@deepseek-ai/dsh-tool-skill'
+          - id: command-goal
+            name: '@deepseek-ai/dsh-command-goal'
+          - id: tool-goal
+            name: '@deepseek-ai/dsh-tool-goal'
+          - id: planning
+            name: cordis:group
+            group: true
+            isolate:
+              planMode: true
+            config:
+              - id: plan-mode
+                name: '@deepseek-ai/dsh-plan-mode'
+                config:
+                  section: |
+                    You are in plan mode. Stay in plan mode until the user approves your plan through exit_plan_mode or switches the session mode. Imperative language to implement changes means plan the implementation, not execute it. A user's conversational agreement — including an answer confirming something you asked — approves nothing and does not end plan mode; fold the confirmed decision into the plan and submit it through exit_plan_mode.
+
+                    Explore first. Use non-mutating reads, searches, static analysis, and checks to ground the plan in the actual repository. Do not edit or write files, change configuration, run formatters or code generation that rewrites tracked files, commit, or otherwise carry out the plan. Prefer existing functions and patterns over new machinery.
+
+                    The tool catalog stays the same across modes for request-cache stability. These plan-mode rules override any later tool description or guidance that suggests using mutation tools; those tools remain listed to keep the tool catalog unchanged. Do not use todo_write to track this planning phase: it tracks implementation after an approved plan, while the plan itself belongs in exit_plan_mode.
+
+                    Resolve discoverable facts by inspection. Use ask_user_question only for user-owned choices or material ambiguity that inspection cannot answer. Do not ask the user where code lives or how current behavior works when you can find out.
+
+                    Make the plan decision-complete: state the goal and success criteria; group implementation changes by subsystem; identify public API, schema, and data-flow changes; cover edge cases, failure modes, tests, acceptance criteria, and explicit assumptions. Keep it concise enough to review but detailed enough that another engineer can implement it without making design decisions.
+
+                    When ready, call exit_plan_mode with the complete plan markdown, starting with a # title. Make exit_plan_mode the only and final tool call in that assistant response: it presents the plan for approval, and implementation begins only in a later step after approval. Do not paste the final plan as a plain reply or ask "should I proceed?" through prose or ask_user_question. If review rejects it, incorporate the feedback and present again. If the review channel is unavailable or aborted, stay in plan mode and ask the user to switch modes manually; do not proceed with implementation.
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+              toolResultPruner: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'
+              - id: tool-result-pruner
+                name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+                config:
+                  thresholdChars: 8192
+                  headChars: 4096
+                  tailChars: 1024
+          - id: delegation
+            name: cordis:group
+            group: true
+            isolate:
+              workflowEngine: true
+            config:
+              - id: tool-subagent-control
+                name: '@deepseek-ai/dsh-tool-subagent-control'
+                disabled: true
+              - id: tool-subagent-list-agents
+                name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+                disabled: true
+              - id: tool-subagent
+                name: '@deepseek-ai/dsh-tool-subagent'
+                config:
+                  provider: spawn
+                  toolName: subagent
+                  modelSelectionSettings: true
+              - id: tool-subagent-fork
+                name: '@deepseek-ai/dsh-tool-subagent'
+                config:
+                  provider: fork
+                  toolName: subagent_fork
+              - id: workflow-ptc
+                name: '@deepseek-ai/dsh-workflow-ptc'
+                disabled: true
+                config:
+                  provider: spawn
+              - id: tool-workflow
+                name: '@deepseek-ai/dsh-tool-workflow'
+                disabled: true
+          - id: tool-ask-user
+            name: '@deepseek-ai/dsh-tool-ask-user'
+          - id: tool-todo
+            name: '@deepseek-ai/dsh-tool-todo'
+            config:
+              allowParallelInProgress: true
+          - id: tool-web
+            name: '@deepseek-ai/dsh-tool-web'
+            config:
+              fetch: true
+              searchTimeoutMs: 60000
+          - id: tool-presentation
+            name: '@deepseek-ai/dsh-agent-tool-presentation'
+            config:
+              mode: ptc
+          - id: present
+            name: '@deepseek-ai/dsh-tool-present'
+          - id: tool-plugin-manager
+            name: '@deepseek-ai/dsh-plugin-manager/tools'
+          - id: tool-plugin-market
+            name: '@deepseek-ai/dsh-plugin-market/tools'

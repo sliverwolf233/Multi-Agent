@@ -1,0 +1,3 @@
+- insert:
+    - id: agensh-skills
+      name: '@local/agensh-skills'
