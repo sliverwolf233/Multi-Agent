@@ -1,6 +1,6 @@
 # Multi-Agent
 
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/content-CC%20BY--SA%204.0-lightgrey.svg)](LICENSE-CC-BY-SA-4.0.txt)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-lightgrey.svg)](LICENSE-CC-BY-NC-SA-4.0.txt)
 [![Network-service path: AGPL-3.0](https://img.shields.io/badge/network--service%20path-AGPL--3.0-blue.svg)](LICENSE-AGPL-3.0.txt)
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）Agent Teams 的**项目经理 Lead + 自组织工人**插件，包含两个可安装的 bundle：
@@ -41,7 +41,7 @@ Multi-Agent/
 ├── agensh-preset/                  # 预设 bundle
 │   ├── cordis.patch.yml            #   preset-agensh 声明：ptc 插件列表 + PM persona + 插件工具
 │   └── package.json
-├── LICENSE-CC-BY-SA-4.0.txt
+├── LICENSE-CC-BY-NC-SA-4.0.txt
 └── LICENSE-AGPL-3.0.txt
 ```
 
@@ -77,14 +77,14 @@ Multi-Agent/
 
 ## License
 
-- **内容路径（默认）**：技能文本、persona、文档等适用 **[CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0.txt)**——署名并以相同协议共享衍生内容。
+- **内容路径（默认）**：技能文本、persona、文档等适用 **[CC BY-NC-SA 4.0](LICENSE-CC-BY-NC-SA-4.0.txt)**——署名、**非商业使用**（NC：不得主要用于商业优势或货币报酬）、并以相同协议共享衍生内容。
 - **网络服务提供路径**：若你以网络服务（如 SaaS / 托管服务）形式向他人提供本项目或其衍生版的功能，该路径适用 **[GNU AGPL-3.0](LICENSE-AGPL-3.0.txt)**——你需向网络用户开放对应源码（AGPL §13）。
 
 两份许可证全文见仓库根目录；本段为便利性说明，不构成法律意见。
 
 ## English summary
 
-A DeepSeek Harness Agent Teams plugin in two installable bundles: `agensh-skills` (bilingual `agensh-lead` / `agensh-worker` skills) and `agensh-preset` (an **Agensh PM Lead** preset based on the shipped `ptc` preset with an always-on project-manager persona — no trigger words). The Lead interviews the user first, sets Goal and Plan, then delegates everything: peer or pipeline collaboration picked from your intent, foreman-mode sub-sub-agents, cross-agent verdicts (Claude Code / Codex as independent reviewers), delegated verification via verdict reports, peer-to-peer findings, sandbox discipline (permissions only for repairing the sandbox itself), and a creation mode where workers author bundles and the Lead activates them one approved install at a time. Requires DSH with the experimental Agent Teams layer. Content under CC BY-SA 4.0; network-service provision paths under AGPL-3.0.
+A DeepSeek Harness Agent Teams plugin in two installable bundles: `agensh-skills` (bilingual `agensh-lead` / `agensh-worker` skills) and `agensh-preset` (an **Agensh PM Lead** preset based on the shipped `ptc` preset with an always-on project-manager persona — no trigger words). The Lead interviews the user first, sets Goal and Plan, then delegates everything: peer or pipeline collaboration picked from your intent, foreman-mode sub-sub-agents, cross-agent verdicts (Claude Code / Codex as independent reviewers), delegated verification via verdict reports, peer-to-peer findings, sandbox discipline (permissions only for repairing the sandbox itself), and a creation mode where workers author bundles and the Lead activates them one approved install at a time. Requires DSH with the experimental Agent Teams layer. Content under CC BY-NC-SA 4.0; network-service provision paths under AGPL-3.0.
 
 ---
 
