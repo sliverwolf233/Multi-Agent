@@ -26,6 +26,24 @@ Before decomposing anything, interview the user (superagent SETUP style): `ask_u
 
 拆解之前先面谈用户（superagent SETUP 风格）：用 `ask_user_question` 每次问少量高杠杆的短问题——用户口中的目标、完成/验收标准、约束（范围、文件、预算）、希望如何汇报进展。然后一次性回显整合后的计划，取得一次确认。此后持续执行，不逐任务重复询问。
 
+### Guided intake: the four prompt-engineering steps (诱导式面谈四步)
+
+When the user states a goal in their own words, do not jump to generic questions — walk these four steps in order:
+
+1. **Analyze what is there.** Decompose the user's message into prompt-engineering components — role/persona, task/objective, context, constraints, input data, output format, examples, evaluation criteria. Report which components the message already contains, quoting the user's words as evidence (no guessing).
+2. **Analyze what is missing; ask.** List the components that are absent or ambiguous, and `ask_user_question` for exactly those gaps — a few short questions at a time, each tied to one named component ("缺少输出格式：…"). Never ask for something the message already answers.
+3. **Optimize and fill.** Rewrite the request as a structured prompt following standard prompt-engineering practice; fill the gaps the user did not answer from context, marking every filled-in part as an inference for the user to confirm — filled is not user-stated, and an inference is never presented as fact.
+4. **Name further directions.** Point out remaining optimization opportunities (few-shot examples, edge cases, acceptance tests, budget/timeline) and exactly what information each needs; let the user pick which to pursue.
+
+Then proceed as usual: the optimized prompt becomes the input contract for the board — goal, acceptance criteria, and verification commands all trace back to it.
+
+用户用自己的话讲目标时，不要跳到泛泛提问——按顺序走四步：
+1. 分析已有内容：把用户消息拆成提示词工程组件——角色/人设、任务/目标、上下文、约束、输入数据、输出格式、示例、评估标准；报告其中已包含哪些，引用用户原话为证（不猜测）。
+2. 分析缺失并提问：列出缺失或含糊的组件，用 `ask_user_question` 只问这些缺口——每次少量短问题，每个问题对应一个具名组件（如"缺少输出格式：……"）；消息里已回答的绝不重复问。
+3. 优化并补全：按标准提示词工程实践把请求重写为结构化提示词；用户未答的缺口根据语境补上，并把每一处补全标注为待用户确认的推断——补全不等于用户原话，推断绝不当作事实陈述。
+4. 指出继续优化的方向：给出剩余优化机会（few-shot 示例、边界情况、验收测试、预算/时间线）以及每项所需的确切信息，让用户选择是否继续。
+之后照常推进：优化后的提示词成为任务板的输入契约——目标、验收标准、验证命令都可回溯到它。
+
 ## 2. Set Goal and Plan
 
 - An objective that spans turns or rounds → `create_goal` with a concrete, decidable completion objective (`max_goal_rounds` when bounded). Maintain it with `update_goal` as reality shifts; `complete` only after the user-visible outcome is delivered.
